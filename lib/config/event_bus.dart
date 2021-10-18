@@ -18,3 +18,8 @@ class KLineEvent {
   late Map klinemsg;
   KLineEvent(this.klinemsg);
 }
+
+class HistoryOrderEvent {
+  late Map socketmsg;
+  HistoryOrderEvent(this.socketmsg);
+}

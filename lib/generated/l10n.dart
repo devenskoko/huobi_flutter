@@ -509,6 +509,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Type`
+  String get orderType {
+    return Intl.message(
+      'Type',
+      name: 'orderType',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

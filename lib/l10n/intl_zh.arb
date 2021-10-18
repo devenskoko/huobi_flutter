@@ -44,5 +44,6 @@
   "orderBookBuy": "买盘",
   "orderBookSell": "卖盘",
   "orderBookAmount": "数量",
-  "orderBookPrice": "价格"
+  "orderBookPrice": "价格",
+  "orderType": "方向"
 }

@@ -24,12 +24,12 @@ abstract class BaseHttp extends DioForNative {
     (transformer as DefaultTransformer).jsonDecodeCallback = parseJson;
     interceptors..add(HeaderInterceptor());
     // 配置代理
-    (httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient client) {
-      client.findProxy = (uri) {
-        return 'PROXY 127.0.0.1:1087';
-      };
-      client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-    };
+    // (httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient client) {
+    //   client.findProxy = (uri) {
+    //     return 'PROXY 127.0.0.1:1087';
+    //   };
+    //   client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    // };
     init();
   }
 

@@ -10,6 +10,7 @@ import 'package:huobi_flutter/utils/ImageUtil.dart';
 import 'package:huobi_flutter/widgets/chart/view.dart';
 import 'logic.dart';
 import 'package:share/share.dart';
+import 'package:date_format/date_format.dart' hide S;
 
 class HqDetailPage extends StatefulWidget {
   const HqDetailPage({Key? key}) : super(key: key);
@@ -31,6 +32,13 @@ class _HqDetailPageState extends State<HqDetailPage> with TickerProviderStateMix
     super.initState();
 
     state.tabController = TabController(vsync: this, length: 3);
+    state.tabController.addListener(() {
+      setState(() {
+        state.tabControllerIndex = state.tabController.index;
+      });
+    });
+
+    logic.updateMarket(market);
   }
 
   @override
@@ -43,7 +51,6 @@ class _HqDetailPageState extends State<HqDetailPage> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    logic.updateMarket(market);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -148,7 +155,7 @@ class _HqDetailPageState extends State<HqDetailPage> with TickerProviderStateMix
               ),
             ),
           ),
-          SliverToBoxAdapter(child: OrderBookWidgt()),
+          SliverToBoxAdapter(child: _getBottomWidaget(state)),
         ],
       ),
       bottomNavigationBar: Container(
@@ -269,6 +276,23 @@ class _HqDetailPageState extends State<HqDetailPage> with TickerProviderStateMix
         ),
       ),
     );
+  }
+
+  Widget _getBottomWidaget(state) {
+    switch (state.tabControllerIndex) {
+      case 0:
+        return OrderBookWidgt();
+      case 1:
+        return HistoryOrder();
+      case 2:
+        return Container(
+          constraints: BoxConstraints(minHeight: 500),
+        );
+      default:
+        return Container(
+          constraints: BoxConstraints(minHeight: 500),
+        );
+    }
   }
 }
 
@@ -629,7 +653,7 @@ class OrderBookWidgt extends StatelessWidget {
           );
         }
         return Container(
-          constraints: BoxConstraints(minHeight: 400),
+          constraints: BoxConstraints(minHeight: 500),
           child: Column(
             children: [
               Padding(
@@ -711,6 +735,146 @@ class OrderBookWidgt extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class HistoryOrder extends StatelessWidget {
+  const HistoryOrder({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<HqDetailLogic>(
+        id: "historyOrder",
+        builder: (logic) {
+          List<Widget> listHistoryOrder = [];
+          if (logic.state.historyOrder.length != 0) {
+            listHistoryOrder = List.generate(20, (index) {
+              return Row(
+                children: [
+                  Container(
+                    width: 100,
+                    height: 35,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "${formatDate(DateTime.fromMillisecondsSinceEpoch(logic.state.historyOrder[index].ts), [HH, ':', nn, ':', ss])}",
+                      style: TextStyle(
+                        color: kTextColor,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 35,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "${logic.state.historyOrder[index].direction == 'buy' ? S.of(context).buy : S.of(context).sell}",
+                      style: TextStyle(
+                        color: logic.state.historyOrder[index].direction == 'buy' ? kTextColorIncreaseUp : kTextColorIncreaseDown,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "${logic.state.historyOrder[index].price}",
+                        style: TextStyle(
+                          color: kTextColor,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 35,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "${logic.state.historyOrder[index].amount!.toStringAsFixed(4)}",
+                      style: TextStyle(
+                        color: kTextColor,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            });
+          };
+          return Container(
+            constraints: BoxConstraints(minHeight: 500),
+            padding: EdgeInsets.only(left: 12, right: 12),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 35,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        S.of(context).date,
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 100,
+                      height: 35,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        S.of(context).orderType,
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          S.of(context).orderBookPrice,
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 100,
+                      height: 35,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        S.of(context).orderBookAmount,
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                Column(children: logic.state.historyOrder.length == 0 ? [] : listHistoryOrder),
+                SizedBox(
+                  height: 14,
+                ),
+              ],
+            ),
+          );
+        }
     );
   }
 }

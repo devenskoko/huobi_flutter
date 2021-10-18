@@ -61,6 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "orderBookBuy": MessageLookupByLibrary.simpleMessage("BUY"),
         "orderBookPrice": MessageLookupByLibrary.simpleMessage("Price"),
         "orderBookSell": MessageLookupByLibrary.simpleMessage("Sell"),
+        "orderType": MessageLookupByLibrary.simpleMessage("Type"),
         "sell": MessageLookupByLibrary.simpleMessage("Sell"),
         "subChart": MessageLookupByLibrary.simpleMessage("Sub"),
         "tabbar1": MessageLookupByLibrary.simpleMessage("Home"),

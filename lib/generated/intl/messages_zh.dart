@@ -60,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "orderBookBuy": MessageLookupByLibrary.simpleMessage("买盘"),
         "orderBookPrice": MessageLookupByLibrary.simpleMessage("价格"),
         "orderBookSell": MessageLookupByLibrary.simpleMessage("卖盘"),
+        "orderType": MessageLookupByLibrary.simpleMessage("方向"),
         "sell": MessageLookupByLibrary.simpleMessage("卖出"),
         "subChart": MessageLookupByLibrary.simpleMessage("副图"),
         "tabbar1": MessageLookupByLibrary.simpleMessage("首页"),

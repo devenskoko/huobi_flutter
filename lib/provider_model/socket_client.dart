@@ -43,6 +43,8 @@ class socketLogic {
       eventBus.fire(new SocketEvent(msg));
     } else if (msg.containsKey('ch') && msg["ch"].indexOf('kline') > -1) {
       eventBus.fire(new KLineEvent(msg));
+    } else if (msg.containsKey('ch') && msg["ch"].indexOf('trade.detail') > -1) {
+      eventBus.fire(new HistoryOrderEvent(msg));
     }
   }
 

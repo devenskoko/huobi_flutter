@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_k_chart/entity/depth_entity.dart';
 import 'package:get/get.dart';
 import 'package:huobi_flutter/config/event_bus.dart';
+import 'package:huobi_flutter/models/market_trade.dart';
 import 'package:huobi_flutter/provider_model/socket_client.dart';
 import 'package:huobi_flutter/models/depth.dart';
 import 'package:huobi_flutter/service/huobi_repository.dart';
@@ -14,6 +15,7 @@ class HqDetailLogic extends GetxController {
   final HqDetailState state = HqDetailState();
 
   final subId = "depth${new Random()}";
+  final subId2 = "depth${new Random()}";
 
   @override
   void onInit() {
@@ -36,23 +38,34 @@ class HqDetailLogic extends GetxController {
     eventBus.on<SocketEvent>().listen((event) {
       updateDepth(event.socketmsg);
     });
+    eventBus.on<HistoryOrderEvent>().listen((event) {
+      updateMarketTrade(event.socketmsg);
+    });
   }
 
   void updateMarket(String market) {
     state.market = market;
     initData();
+    getMarketTrade();
 
     // 订阅 深度
     String str = '{"sub": "market.${state.market}.depth.step0"},"id": "${subId}"';
-    print('深度订阅');
+    print('订阅');
     socketLogic.sub(str);
+
+    // 成交订阅
+    String str2 = '{"sub": "market.${state.market}.trade.detail"},"id": "${subId2}"';
+    socketLogic.sub(str2);
   }
 
   unsubscribe() {
     // 取消订阅
     String str = '{"unsub": "market.${state.market}.depth.step0","id": "${subId}"}';
-    print('深度取消订阅');
+    print('取消订阅');
     socketLogic.unsub(str);
+
+    String str2 = '{"unsub": "market.${state.market}.trade.detail"},"id": "${subId2}"';
+    socketLogic.unsub(str2);
   }
 
   void updateDepth(data) {
@@ -133,5 +146,17 @@ class HqDetailLogic extends GetxController {
       dealString = num.toStringAsFixed(2);
     }
     return dealString;
+  }
+
+  Future<void> getMarketTrade() async {
+    List<market_trade> result = await HuobiRepository.fetchMarketTrade({"symbol": state.market, "size": 20});
+    state.historyOrder = result;
+  }
+
+  void updateMarketTrade(data) {
+    List<market_trade> result = data["tick"]["data"].map<market_trade>((item) => market_trade.fromJson(item)).toList();
+    state.historyOrder.addAll(result);
+    state.historyOrder = state.historyOrder.reversed.toList();
+    update(['historyOrder']);
   }
 }

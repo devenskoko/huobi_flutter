@@ -44,5 +44,6 @@
   "orderBookBuy": "BUY",
   "orderBookSell": "Sell",
   "orderBookAmount": "Amount",
-  "orderBookPrice": "Price"
+  "orderBookPrice": "Price",
+  "orderType": "Type"
 }
