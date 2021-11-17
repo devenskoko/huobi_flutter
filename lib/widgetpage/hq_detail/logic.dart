@@ -41,6 +41,9 @@ class HqDetailLogic extends GetxController {
     eventBus.on<HistoryOrderEvent>().listen((event) {
       updateMarketTrade(event.socketmsg);
     });
+    eventBus.on<TickersEvent>().listen((event) {
+      updateTop(event.tickers);
+    });
   }
 
   void updateMarket(String market) {
@@ -94,9 +97,14 @@ class HqDetailLogic extends GetxController {
   }
 
   void initData() {
+    updateTop();
+  }
+
+  void updateTop([tickers]) {
     int num = 0;
     double usdthusdPrice = 0.0;
-    for (final item in symbolLogic.tickers) {
+    var tickersData = tickers != null ? tickers : symbolLogic.tickers;
+    for (final item in tickersData) {
       if (item.symbol == state.market) {
         state.marketData = item.toJson();
         var price = item.close;
